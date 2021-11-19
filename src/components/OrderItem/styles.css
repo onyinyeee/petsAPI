@@ -1,0 +1,13 @@
+.order-item {
+    padding: 1rem;
+    border: 1px solid gray;
+    margin-top: 1rem;
+    display: flex;
+    flex-direction: column;
+
+}
+
+.order-item-desc{
+    display: flex;
+    flex-direction: column;
+}
