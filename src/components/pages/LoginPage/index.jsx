@@ -1,5 +1,7 @@
 import { useState } from "react"
 import {useForm} from 'react-hook-form';
+import {getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
+import { useHistory } from "react-router-dom";
 import './styles.css'
 
 export const LoginPage = () => {
@@ -7,12 +9,33 @@ export const LoginPage = () => {
 
     const {register, handleSubmit } = useForm();
 
-    const loginUser = () => (formVals) => {
-        console.log("login submitte", formVals)
+    const history = useHistory();
+
+    const loginUser = async(formVals) => {
+
+        try {
+            console.log("login submitted", formVals)
+            const auth = getAuth();
+            const loginUser = await signInWithEmailAndPassword(auth, formVals.user, formVals.password);
+            history.push('/');
+            console.log("after login", auth);
+
+        }catch(error) {
+            console.log ("Error connecting to firebase", error)
+        }
     }
 
-    const signUpUser = () => (formVals) => {
+    const signUpUser = async(formVals) => {
         console.log("signup submitte", formVals)
+        const auth = getAuth();
+
+        try {
+            const sighUpUser = await createUserWithEmailAndPassword(auth, formVals.user, formVals.password);
+            console.log("new user was created", signUpUser);
+            history.push('/');
+        }catch (error) {
+            console.log("error with firebase", error)
+        }
     }
 
     return (
@@ -29,7 +52,7 @@ export const LoginPage = () => {
                     <label htmlFor="password">password</label>
                     <input type="password" name="password" required {...register('password')}/>
 
-                    <inut type="submit"  value="Login" />
+                    <input type="submit"  value="Login" />
                     <br/>
                     <p>Dont have an account, sign up</p>
                     <button onClick={() => setMode("signup")}> Sign Up</button>
@@ -50,7 +73,7 @@ export const LoginPage = () => {
                     <label htmlFor="passwordConfirm">Confirm password</label>
                     <input type="password" name="passwordConfirm" required {...register('passwordConfirm')}/>
 
-                    <inut type="submit"  value="Sign Up" />
+                    <input type="submit"  value="Sign Up" />
                     <br/>
                     <p>Dont have an account, sign up</p>
                     <button onClick={() => setMode("login")}> Log in</button>
